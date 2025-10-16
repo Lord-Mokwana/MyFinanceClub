@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MyFinanceClub — Loan Application</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="brand">
+      <h1>MyFinanceClub</h1>
+      <p class="tag">Fast • Clear • Professional lending</p>
+    </div>
+    <nav class="nav">
+      <a href="#home">Home</a>
+      <a href="#apply">Apply</a>
+      <a href="#terms">Terms</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <!-- HOME -->
+  <section id="home" class="card">
+    <h2>Welcome to MyFinanceClub</h2>
+    <p>Quick, transparent personal loans for employees. Complete the simple 4-step application and we will notify you once approved.</p>
+    <ul class="features">
+      <li>Interest: 40% per month (fixed)</li>
+      <li>Late penalty: 1% per day on outstanding (max 3 days)</li>
+      <li>Two repayment options available</li>
+    </ul>
+    <p><a class="btn primary" href="#apply" id="startApply">Apply Now</a></p>
+  </section>
+
+  <!-- APPLY (multi-stage wizard) -->
+  <section id="apply" class="card">
+    <h2>Apply — 4 Step Application</h2>
+
+    <div id="wizard">
+      <!-- progress -->
+      <div id="progress" class="progress">
+        <div class="step active" data-step="1">1<br><small>Loan</small></div>
+        <div class="step" data-step="2">2<br><small>Financials</small></div>
+        <div class="step" data-step="3">3<br><small>Banking</small></div>
+        <div class="step" data-step="4">4<br><small>Docs</small></div>
+      </div>
+
+      <!-- Stage 1: Loan Application -->
+      <form id="stage1" class="stage">
+        <h3>Stage 1 — Loan Application</h3>
+        <label>Full name<input id="s1_name" required/></label>
+        <label>Employee number<input id="s1_employee" required/></label>
+        <label>Email<input id="s1_email" type="email" required/></label>
+        <label>Phone<input id="s1_phone" required/></label>
+        <label>Borrowed Amount (ZAR)<input id="s1_principal" type="number" min="1" step="0.01" required/></label>
+        <label>Interest Rate (%)<input id="s1_interest" type="number" value="40" readonly/></label>
+        <label>Due Date<input id="s1_due" type="date" required/></label>
+
+        <div class="signature-row">
+          <div>
+            <label>Sign (draw)</label>
+            <canvas id="sig" width="400" height="120"></canvas>
+            <div class="sig-controls">
+              <button type="button" id="clearSig">Clear signature</button>
+            </div>
+          </div>
+          <div>
+            <label>Or type full name as signature<input id="s1_typedSignature" /></label>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button type="button" class="btn primary" id="toStage2">Continue</button>
+        </div>
+      </form>
+
+      <!-- Stage 2: Financials -->
+      <form id="stage2" class="stage hidden">
+        <h3>Stage 2 — Income & Expenditure</h3>
+
+        <fieldset>
+          <legend>A. Total Monthly Income</legend>
+          <label>Basic salary<input id="inc_basic" type="number" step="0.01"/></label>
+          <label>Allowances<input id="inc_allow" type="number" step="0.01"/></label>
+          <label>Commissions / Other<input id="inc_other" type="number" step="0.01"/></label>
+          <div class="calc">Total Income: <strong id="calc_income">R 0.00</strong></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>B. Monthly Expenditure</legend>
+          <label>Salary deductions (tax/pension etc.)<input id="exp_deductions" type="number" step="0.01"/></label>
+          <label>Debt repayments (loans/cards)<input id="exp_debt" type="number" step="0.01"/></label>
+          <label>Living expenses (rent/groceries/transport)<input id="exp_living" type="number" step="0.01"/></label>
+          <div class="calc">Total Expenses: <strong id="calc_expenses">R 0.00</strong></div>
+        </fieldset>
+
+        <div class="summary">
+          <div>Net Monthly Income (A − deductions): <strong id="calc_net">R 0.00</strong></div>
+          <div>Monthly Surplus / Deficit (A − B): <strong id="calc_surplus">R 0.00</strong></div>
+        </div>
+
+        <div class="nav-buttons">
+          <button type="button" class="btn" id="backTo1">Back</button>
+          <button type="button" class="btn primary" id="toStage3">Continue</button>
+        </div>
+      </form>
+
+      <!-- Stage 3: Banking details -->
+      <form id="stage3" class="stage hidden">
+        <h3>Stage 3 — Banking Details</h3>
+        <label>Bank name<input id="bank_name" /></label>
+        <label>Account holder name<input id="bank_holder" /></label>
+        <label>Account number<input id="bank_account" /></label>
+        <label>Branch code<input id="bank_branch" /></label>
+        <label>Account type
+          <select id="bank_type">
+            <option value="cheque">Cheque</option>
+            <option value="savings">Savings</option>
+          </select>
+        </label>
+
+        <div class="nav-buttons">
+          <button type="button" class="btn" id="backTo2">Back</button>
+          <button type="button" class="btn primary" id="toStage4">Continue</button>
+        </div>
+      </form>
+
+      <!-- Stage 4: Document upload -->
+      <form id="stage4" class="stage hidden">
+        <h3>Stage 4 — Upload Documents</h3>
+        <p>Please upload scanned copies or photos (ID, latest payslip, proof of residence, etc.). Maximum 10 MB per file.</p>
+        <label>Upload files<input id="docs" type="file" multiple accept=".pdf,image/*"/></label>
+        <div id="fileList"></div>
+
+        <label>Late fee per day (ZAR - optional)<input id="lateFee" type="number" step="0.01" /></label>
+
+        <div class="nav-buttons">
+          <button type="button" class="btn" id="backTo3">Back</button>
+          <button type="button" class="btn primary" id="submitApp">Submit Application</button>
+        </div>
+      </form>
+
+      <div id="submitStatus" class="status"></div>
+    </div>
+  </section>
+
+  <!-- TERMS -->
+  <section id="terms" class="card">
+    <h2>Terms & Promissory Note</h2>
+    <p><strong>Principal & interest:</strong> The borrower borrows the stated principal; interest is fixed at <strong>40% per month</strong>. Total amount payable equals principal + interest.</p>
+
+    <p><strong>Repayment options:</strong> Full lump-sum on due date, or two-month instalment plan:
+    Month 1: 80% of total; Month 2: remaining balance plus 40% additional on remainder (see example in the promissory note).</p>
+
+    <p><strong>Late payments:</strong> Late payment incurs a penalty of <strong>1% per day</strong> of the total amount (Principal + Interest) for up to <strong>three days</strong>. After 3 days the lender may take possession of agreed collateral. MyFinanceClub allows payment of the principal only on the due date if borrower chooses; the daily 1% rule continues to apply to interest.</p>
+
+    <p><strong>Prepayment:</strong> Borrower may prepay at any time without penalty.</p>
+
+    <p><strong>Other conditions:</strong> By submitting, borrower agrees to the promissory note and authorizes MyFinanceClub to verify bank details and, if necessary, contact provided references. The lender reserves rights specified in the promissory note.</p>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="card">
+    <h2>Contact</h2>
+    <p><strong>Email:</strong> <a href="mailto:myfinanceclub101@gmail.com">myfinanceclub101@gmail.com</a></p>
+    <p><strong>Phone (WhatsApp/SMS):</strong> <span id="lenderPhone">27832486598</span></p>
+    <p>For support, call or WhatsApp us and include your employee number in the message.</p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>© 2025 MyFinanceClub — All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
